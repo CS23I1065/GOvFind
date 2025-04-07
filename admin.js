@@ -2,7 +2,7 @@
 // Initialize Supabase client
 const supabaseUrl = 'https://pleyywewugbjnimeutig.supabase.co'; // Replace with your Supabase URL
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsZXl5d2V3dWdiam5pbWV1dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMTU3NTUsImV4cCI6MjA1OTU5MTc1NX0.wK2gPCgYsRC6tQoVBK98CQZmk-HOR5oIstLoIQCkU4U'; // Replace with your Supabase anon/public key
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = Supabase.createClient(supabaseUrl, supabaseKey);
 
 // DOM elements
 const loginContainer = document.getElementById('loginContainer');
