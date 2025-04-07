@@ -5,6 +5,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 '; // Replace with your Supabase anon/public key
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+
 // DOM elements
 const loginContainer = document.getElementById('loginContainer');
 const adminContainer = document.getElementById('adminContainer');
