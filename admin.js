@@ -1,23 +1,25 @@
-// admin.js
+// File: admin.js
+// Initialize Supabase client
+const supabaseUrl = 'YOUR_SUPABASE_URL'; // Replace with your Supabase URL
+const supabaseKey = 'YOUR_SUPABASE_PUBLIC_KEY'; // Replace with your Supabase anon/public key
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+// DOM elements
+const loginContainer = document.getElementById('loginContainer');
+const adminContainer = document.getElementById('adminContainer');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const logoutBtn = document.getElementById('logoutBtn');
+const officeForm = document.getElementById('officeForm');
+const officeTableBody = document.getElementById('officeTableBody');
+const loadingIndicator = document.getElementById('loadingIndicator');
+const loadError = document.getElementById('loadError');
+const formSuccess = document.getElementById('formSuccess');
+const formError = document.getElementById('formError');
+const cancelEditBtn = document.getElementById('cancelEdit');
+
+// Check if user is already authenticated
 document.addEventListener('DOMContentLoaded', async () => {
-    const supabaseUrl = 'https://pleyywewugbjnimeutig.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsZXl5d2V3dWdiam5pbWV1dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMTU3NTUsImV4cCI6MjA1OTU5MTc1NX0.wK2gPCgYsRC6tQoVBK98CQZmk-HOR5oIstLoIQCkU4U';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const loginContainer = document.getElementById('loginContainer');
-    const adminContainer = document.getElementById('adminContainer');
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const officeForm = document.getElementById('officeForm');
-    const officeTableBody = document.getElementById('officeTableBody');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    const loadError = document.getElementById('loadError');
-    const formSuccess = document.getElementById('formSuccess');
-    const formError = document.getElementById('formError');
-    const cancelEditBtn = document.getElementById('cancelEdit');
-
-    // Auth check
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
         showAdminPanel();
@@ -25,138 +27,213 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         showLoginPanel();
     }
+});
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        loginError.classList.add('d-none');
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+// Login handler
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.classList.add('hidden');
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+        
         if (error) {
             loginError.textContent = error.message;
-            loginError.classList.remove('d-none');
+            loginError.classList.remove('hidden');
         } else {
             showAdminPanel();
             loadOffices();
         }
-    });
-
-    logoutBtn.addEventListener('click', async () => {
-        await supabase.auth.signOut();
-        showLoginPanel();
-    });
-
-    function showLoginPanel() {
-        loginContainer.classList.remove('d-none');
-        adminContainer.classList.add('d-none');
+    } catch (err) {
+        loginError.textContent = 'Login failed. Please try again.';
+        loginError.classList.remove('hidden');
     }
+});
 
-    function showAdminPanel() {
-        loginContainer.classList.add('d-none');
-        adminContainer.classList.remove('d-none');
-    }
+// Logout handler
+logoutBtn.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    showLoginPanel();
+});
 
-    async function loadOffices() {
-        loadingIndicator.classList.remove('d-none');
-        loadError.classList.add('d-none');
-        officeTableBody.innerHTML = '';
+// Show login panel
+function showLoginPanel() {
+    loginContainer.classList.remove('hidden');
+    adminContainer.classList.add('hidden');
+}
+
+// Show admin panel
+function showAdminPanel() {
+    loginContainer.classList.add('hidden');
+    adminContainer.classList.remove('hidden');
+}
+
+// Load offices from database
+async function loadOffices() {
+    loadingIndicator.classList.remove('hidden');
+    loadError.classList.add('hidden');
+    officeTableBody.innerHTML = '';
+    
+    try {
         const { data, error } = await supabase
             .from('government_offices')
             .select('*')
             .order('service_type', { ascending: true })
             .order('city', { ascending: true });
+        
         if (error) {
-            loadError.textContent = 'Error loading data: ' + error.message;
-            loadError.classList.remove('d-none');
-        } else {
-            data.forEach(appendOfficeRow);
+            throw error;
         }
-        loadingIndicator.classList.add('d-none');
+        
+        if (data) {
+            data.forEach(office => {
+                appendOfficeRow(office);
+            });
+        }
+    } catch (err) {
+        loadError.textContent = 'Failed to load offices: ' + err.message;
+        loadError.classList.remove('hidden');
+    } finally {
+        loadingIndicator.classList.add('hidden');
     }
+}
 
-    function appendOfficeRow(office) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${office.service_type}</td>
-            <td>${office.city}</td>
-            <td>${office.office_name}</td>
-            <td>${office.address}</td>
-            <td>
-                <button class="btn btn-sm btn-primary edit-btn" data-id="${office.id}">Edit</button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="${office.id}">Delete</button>
-            </td>
-        `;
-        row.querySelector('.edit-btn').addEventListener('click', () => editOffice(office));
-        row.querySelector('.delete-btn').addEventListener('click', () => deleteOffice(office.id));
-        officeTableBody.appendChild(row);
+// Add office row to table
+function appendOfficeRow(office) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${office.service_type}</td>
+        <td>${office.city}</td>
+        <td>${office.office_name}</td>
+        <td>${office.address}</td>
+        <td>
+            <button class="btn btn-sm btn-primary edit-btn" data-id="${office.id}">Edit</button>
+            <button class="btn btn-sm btn-danger delete-btn" data-id="${office.id}">Delete</button>
+        </td>
+    `;
+    
+    // Add event listeners to buttons
+    row.querySelector('.edit-btn').addEventListener('click', () => editOffice(office));
+    row.querySelector('.delete-btn').addEventListener('click', () => deleteOffice(office.id));
+    
+    officeTableBody.appendChild(row);
+}
+
+// Edit office
+function editOffice(office) {
+    // Populate form with office data
+    document.getElementById('officeId').value = office.id;
+    document.getElementById('serviceType').value = office.service_type;
+    document.getElementById('city').value = office.city;
+    document.getElementById('officeName').value = office.office_name;
+    document.getElementById('address').value = office.address;
+    document.getElementById('timings').value = office.timings;
+    document.getElementById('contactNumber').value = office.contact_number || '';
+    document.getElementById('website').value = office.website || '';
+    document.getElementById('mapLink').value = office.map_link || '';
+    
+    // Show cancel button
+    cancelEditBtn.classList.remove('hidden');
+    
+    // Scroll to form
+    document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Delete office
+async function deleteOffice(id) {
+    if (!confirm('Are you sure you want to delete this office?')) {
+        return;
     }
-
-    function editOffice(office) {
-        document.getElementById('officeId').value = office.id;
-        document.getElementById('serviceType').value = office.service_type;
-        document.getElementById('city').value = office.city;
-        document.getElementById('officeName').value = office.office_name;
-        document.getElementById('address').value = office.address;
-        document.getElementById('timings').value = office.timings || '';
-        document.getElementById('contactNumber').value = office.contact_number || '';
-        document.getElementById('website').value = office.website || '';
-        document.getElementById('mapLink').value = office.map_link || '';
-        cancelEditBtn.classList.remove('d-none');
-        document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    async function deleteOffice(id) {
-        if (!confirm('Are you sure you want to delete this office?')) return;
-        const { error } = await supabase.from('government_offices').delete().eq('id', id);
+    
+    try {
+        const { error } = await supabase
+            .from('government_offices')
+            .delete()
+            .eq('id', id);
+        
         if (error) {
-            formError.textContent = 'Delete failed: ' + error.message;
-            formError.classList.remove('d-none');
-        } else {
-            formSuccess.textContent = 'Deleted successfully';
-            formSuccess.classList.remove('d-none');
-            loadOffices();
-            setTimeout(() => formSuccess.classList.add('d-none'), 3000);
+            throw error;
         }
+        
+        // Reload offices
+        loadOffices();
+        
+        formSuccess.textContent = 'Office deleted successfully.';
+        formSuccess.classList.remove('hidden');
+        setTimeout(() => formSuccess.classList.add('hidden'), 3000);
+    } catch (err) {
+        formError.textContent = 'Failed to delete office: ' + err.message;
+        formError.classList.remove('hidden');
+        setTimeout(() => formError.classList.add('hidden'), 5000);
     }
+}
 
-    cancelEditBtn.addEventListener('click', resetForm);
+// Cancel edit
+cancelEditBtn.addEventListener('click', () => {
+    resetForm();
+});
 
-    function resetForm() {
-        officeForm.reset();
-        document.getElementById('officeId').value = '';
-        cancelEditBtn.classList.add('d-none');
-    }
+// Reset form
+function resetForm() {
+    officeForm.reset();
+    document.getElementById('officeId').value = '';
+    cancelEditBtn.classList.add('hidden');
+}
 
-    officeForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        formError.classList.add('d-none');
-        const officeId = document.getElementById('officeId').value;
-        const officeData = {
-            service_type: document.getElementById('serviceType').value.toLowerCase(),
-            city: document.getElementById('city').value.toLowerCase(),
-            office_name: document.getElementById('officeName').value,
-            address: document.getElementById('address').value,
-            timings: document.getElementById('timings').value,
-            contact_number: document.getElementById('contactNumber').value,
-            website: document.getElementById('website').value,
-            map_link: document.getElementById('mapLink').value
-        };
+// Office form submission
+officeForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    formSuccess.classList.add('hidden');
+    formError.classList.add('hidden');
+    
+    const officeId = document.getElementById('officeId').value;
+    const officeData = {
+        service_type: document.getElementById('serviceType').value.toLowerCase(),
+        city: document.getElementById('city').value.toLowerCase(),
+        office_name: document.getElementById('officeName').value,
+        address: document.getElementById('address').value,
+        timings: document.getElementById('timings').value,
+        contact_number: document.getElementById('contactNumber').value,
+        website: document.getElementById('website').value,
+        map_link: document.getElementById('mapLink').value
+    };
+    
+    try {
         let result;
+        
         if (officeId) {
-            result = await supabase.from('government_offices').update(officeData).eq('id', officeId);
+            // Update existing office
+            result = await supabase
+                .from('government_offices')
+                .update(officeData)
+                .eq('id', officeId);
         } else {
-            result = await supabase.from('government_offices').insert(officeData);
+            // Insert new office
+            result = await supabase
+                .from('government_offices')
+                .insert(officeData);
         }
-
+        
         if (result.error) {
-            formError.textContent = 'Error: ' + result.error.message;
-            formError.classList.remove('d-none');
-        } else {
-            formSuccess.textContent = officeId ? 'Updated successfully' : 'Added successfully';
-            formSuccess.classList.remove('d-none');
-            resetForm();
-            loadOffices();
-            setTimeout(() => formSuccess.classList.add('d-none'), 3000);
+            throw result.error;
         }
-    });
+        
+        // Reset form and reload offices
+        resetForm();
+        loadOffices();
+        
+        formSuccess.textContent = officeId ? 'Office updated successfully.' : 'Office added successfully.';
+        formSuccess.classList.remove('hidden');
+        setTimeout(() => formSuccess.classList.add('hidden'), 3000);
+    } catch (err) {
+        formError.textContent = 'Failed to save office: ' + err.message;
+        formError.classList.remove('hidden');
+    }
 });
