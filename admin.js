@@ -1,7 +1,8 @@
 // File: admin.js
 // Initialize Supabase client
-const supabaseUrl = 'YOUR_SUPABASE_URL'; // Replace with your Supabase URL
-const supabaseKey = 'YOUR_SUPABASE_PUBLIC_KEY'; // Replace with your Supabase anon/public key
+const supabaseUrl = 'https://pleyywewugbjnimeutig.supabase.co'; // Replace with your Supabase URL
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsZXl5d2V3dWdiam5pbWV1dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMTU3NTUsImV4cCI6MjA1OTU5MTc1NX0.wK2gPCgYsRC6tQoVBK98CQZmk-HOR5oIstLoIQCkU4U
+'; // Replace with your Supabase anon/public key
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // DOM elements
