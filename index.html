@@ -39,51 +39,63 @@
     </div>
 
     <!-- Office Form -->
-    <div class="form-container">
-      <form id="officeForm">
-        <input type="hidden" id="officeId" />
-        <div class="mb-2">
-          <label for="serviceType" class="form-label">Service Type</label>
-          <input type="text" class="form-control" id="serviceType" required>
-        </div>
-        <div class="mb-2">
-          <label for="city" class="form-label">City</label>
-          <input type="text" class="form-control" id="city" required>
-        </div>
-        <div class="mb-2">
-          <label for="officeName" class="form-label">Office Name</label>
-          <input type="text" class="form-control" id="officeName" required>
-        </div>
-        <div class="mb-2">
-          <label for="address" class="form-label">Address</label>
-          <textarea class="form-control" id="address" rows="2" required></textarea>
-        </div>
-        <div class="mb-2">
-          <label for="timings" class="form-label">Timings</label>
-          <input type="text" class="form-control" id="timings">
-        </div>
-        <div class="mb-2">
-          <label for="contactNumber" class="form-label">Contact Number</label>
-          <input type="text" class="form-control" id="contactNumber">
-        </div>
-        <div class="mb-2">
-          <label for="website" class="form-label">Website</label>
-          <input type="url" class="form-control" id="website">
-        </div>
-        <div class="mb-2">
-          <label for="mapLink" class="form-label">Map Link</label>
-          <input type="url" class="form-control" id="mapLink">
-        </div>
-
-        <div class="d-flex gap-2 mt-2">
-          <button type="submit" class="btn btn-success">Save</button>
-          <button type="button" class="btn btn-warning hidden" id="cancelEdit">Cancel Edit</button>
-        </div>
-
-        <div id="formSuccess" class="alert alert-success mt-2 hidden"></div>
-        <div id="formError" class="alert alert-danger mt-2 hidden"></div>
-      </form>
+    <!-- Office Form -->
+<div class="form-container">
+  <form id="officeForm">
+    <input type="hidden" id="officeId" />
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="serviceType" class="form-label">Service Type</label>
+        <input type="text" class="form-control" id="serviceType" required>
+      </div>
+      <div class="col-md-6">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" required>
+      </div>
     </div>
+
+    <div class="mb-3">
+      <label for="officeName" class="form-label">Office Name</label>
+      <input type="text" class="form-control" id="officeName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="address" class="form-label">Address</label>
+      <textarea class="form-control" id="address" rows="2" required></textarea>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="timings" class="form-label">Timings</label>
+        <input type="text" class="form-control" id="timings">
+      </div>
+      <div class="col-md-6">
+        <label for="contactNumber" class="form-label">Contact Number</label>
+        <input type="text" class="form-control" id="contactNumber">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="website" class="form-label">Website</label>
+        <input type="url" class="form-control" id="website">
+      </div>
+      <div class="col-md-6">
+        <label for="mapLink" class="form-label">Map Link</label>
+        <input type="url" class="form-control" id="mapLink">
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+      <button type="submit" class="btn btn-success">Save Office</button>
+      <button type="button" class="btn btn-warning hidden" id="cancelEdit">Cancel Edit</button>
+    </div>
+
+    <div id="formSuccess" class="alert alert-success mt-2 hidden"></div>
+    <div id="formError" class="alert alert-danger mt-2 hidden"></div>
+  </form>
+</div>
+
 
     <!-- Loading & Table -->
     <div id="loadingIndicator" class="my-4">Loading...</div>
