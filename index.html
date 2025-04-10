@@ -3,100 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Panel - Government Offices</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <title>Government Office Finder Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .hidden { display: none; }
+    .form-container { margin-top: 2rem; }
+  </style>
 </head>
-<body>
-  <div class="container mt-4">
-    <!-- Login Form -->
-    <div id="loginContainer">
-      <h2>Admin Login</h2>
-      <form id="loginForm">
-        <div class="mb-3">
-          <label for="email" class="form-label">Email address</label>
-          <input type="email" class="form-control" id="email" required />
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="password" required />
-        </div>
-        <div id="loginError" class="alert alert-danger d-none"></div>
-        <button type="submit" class="btn btn-primary">Login</button>
-      </form>
+<body class="container py-4">
+
+  <h1 class="mb-4">Government Office Finder - Admin Panel</h1>
+
+  <!-- Login Panel -->
+  <div id="loginContainer">
+    <form id="loginForm">
+      <div class="mb-3">
+        <label for="email" class="form-label">Admin Email</label>
+        <input type="email" class="form-control" id="email" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Admin Password</label>
+        <input type="password" class="form-control" id="password" required>
+      </div>
+      <div id="loginError" class="alert alert-danger hidden"></div>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminContainer" class="hidden">
+
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="mb-3">Manage Government Offices</h2>
+      <button id="logoutBtn" class="btn btn-secondary">Logout</button>
     </div>
 
-    <!-- Admin Panel -->
-    <div id="adminContainer" class="d-none">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Manage Government Offices</h2>
-        <button id="logoutBtn" class="btn btn-danger">Logout</button>
+    <!-- Office Form -->
+    <!-- Office Form -->
+<div class="form-container">
+  <form id="officeForm">
+    <input type="hidden" id="officeId" />
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="serviceType" class="form-label">Service Type</label>
+        <input type="text" class="form-control" id="serviceType" required>
       </div>
-
-      <!-- Add/Edit Office Form -->
-      <div class="form-container mb-4">
-        <h4 id="formTitle">Add/Edit Office</h4>
-        <form id="officeForm">
-          <input type="hidden" id="officeId" />
-          <div class="mb-3">
-            <label for="serviceType" class="form-label">Service Type</label>
-            <input type="text" class="form-control" id="serviceType" required />
-          </div>
-          <div class="mb-3">
-            <label for="city" class="form-label">City</label>
-            <input type="text" class="form-control" id="city" required />
-          </div>
-          <div class="mb-3">
-            <label for="officeName" class="form-label">Office Name</label>
-            <input type="text" class="form-control" id="officeName" required />
-          </div>
-          <div class="mb-3">
-            <label for="address" class="form-label">Address</label>
-            <textarea class="form-control" id="address" required></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="timings" class="form-label">Timings</label>
-            <input type="text" class="form-control" id="timings" required />
-          </div>
-          <div class="mb-3">
-            <label for="contactNumber" class="form-label">Contact Number</label>
-            <input type="text" class="form-control" id="contactNumber" />
-          </div>
-          <div class="mb-3">
-            <label for="website" class="form-label">Website</label>
-            <input type="text" class="form-control" id="website" />
-          </div>
-          <div class="mb-3">
-            <label for="mapLink" class="form-label">Map Link</label>
-            <input type="text" class="form-control" id="mapLink" />
-          </div>
-
-          <div id="formSuccess" class="alert alert-success d-none"></div>
-          <div id="formError" class="alert alert-danger d-none"></div>
-
-          <button type="submit" class="btn btn-success">Save</button>
-          <button type="button" id="cancelEdit" class="btn btn-secondary d-none">Cancel</button>
-        </form>
-      </div>
-
-      <!-- Office List -->
-      <div>
-        <h4>Office List</h4>
-        <div id="loadingIndicator" class="mb-2">Loading...</div>
-        <div id="loadError" class="alert alert-danger d-none"></div>
-        <table class="table table-bordered">
-          <thead class="table-light">
-            <tr>
-              <th>Service Type</th>
-              <th>City</th>
-              <th>Office Name</th>
-              <th>Address</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="officeTableBody"></tbody>
-        </table>
+      <div class="col-md-6">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" required>
       </div>
     </div>
+
+    <div class="mb-3">
+      <label for="officeName" class="form-label">Office Name</label>
+      <input type="text" class="form-control" id="officeName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="address" class="form-label">Address</label>
+      <textarea class="form-control" id="address" rows="2" required></textarea>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="timings" class="form-label">Timings</label>
+        <input type="text" class="form-control" id="timings">
+      </div>
+      <div class="col-md-6">
+        <label for="contactNumber" class="form-label">Contact Number</label>
+        <input type="text" class="form-control" id="contactNumber">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="website" class="form-label">Website</label>
+        <input type="url" class="form-control" id="website">
+      </div>
+      <div class="col-md-6">
+        <label for="mapLink" class="form-label">Map Link</label>
+        <input type="url" class="form-control" id="mapLink">
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+      <button type="submit" class="btn btn-success">Save Office</button>
+      <button type="button" class="btn btn-warning hidden" id="cancelEdit">Cancel Edit</button>
+    </div>
+
+    <div id="formSuccess" class="alert alert-success mt-2 hidden"></div>
+    <div id="formError" class="alert alert-danger mt-2 hidden"></div>
+  </form>
+</div>
+
+
+    <!-- Loading & Table -->
+    <div id="loadingIndicator" class="my-4">Loading...</div>
+    <div id="loadError" class="alert alert-danger hidden"></div>
+    
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>City</th>
+          <th>Office</th>
+          <th>Address</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="officeTableBody"></tbody>
+    </table>
   </div>
 
   <!-- Scripts -->
