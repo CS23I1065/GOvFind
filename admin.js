@@ -113,7 +113,7 @@ async function loadOffices() {
 // Add office row to table
 function appendOfficeRow(office) {
     const row = document.createElement('tr');
-    row.innerHTML = 
+    row.innerHTML = `
         <td>${office.service_type}</td>
         <td>${office.city}</td>
         <td>${office.office_name}</td>
@@ -122,14 +122,15 @@ function appendOfficeRow(office) {
             <button class="btn btn-sm btn-primary edit-btn" data-id="${office.id}">Edit</button>
             <button class="btn btn-sm btn-danger delete-btn" data-id="${office.id}">Delete</button>
         </td>
-    ;
-    
+    `;
+
     // Add event listeners to buttons
     row.querySelector('.edit-btn').addEventListener('click', () => editOffice(office));
     row.querySelector('.delete-btn').addEventListener('click', () => deleteOffice(office.id));
-    
+
     officeTableBody.appendChild(row);
 }
+
 
 // Edit office
 function editOffice(office) {
